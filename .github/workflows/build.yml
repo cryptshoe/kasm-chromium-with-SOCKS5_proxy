@@ -1,46 +1,25 @@
-name: Build and Push Docker Image
+name: Build Docker Image (no push)
 
 on:
   push:
     branches:
-      - main   # or your default branch
-    tags:
-      - 'v*'    # trigger on version tags like v1.0.0
-  workflow_dispatch:   # to manually trigger the workflow
-
-env:
-  DOCKER_IMAGE_NAME: your-dockerhub-username/kasm_chromium_proxy
-  DOCKER_REGISTRY: docker.io
+      - main
+  workflow_dispatch:
 
 jobs:
-  build_and_push:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Extract version (tag)
-      id: extract_version
-      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        file: ./Dockerfile
-        push: true
-        tags: |
-          ${{ env.DOCKER_IMAGE_NAME }}:${{ steps.extract_version.outputs.VERSION }}
-          ${{ env.DOCKER_IMAGE_NAME }}:latest
-        cache-from: type=registry,ref=${{ env.DOCKER_IMAGE_NAME }}:buildcache
-        cache-to: type=registry,ref=${{ env.DOCKER_IMAGE_NAME }}:buildcache,mode=max
+      - name: Build Docker image locally
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false            # Do not push the image
+          tags: kasm_chromium_proxy:latest
