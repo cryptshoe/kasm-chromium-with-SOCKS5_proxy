@@ -33,7 +33,7 @@ jobs:
       
       - name: Build the Docker image
         run: |
-          docker build --no-cache . --tag ${{ env.REGISTRY }}/kasm-chromium-proxy:${{ github.run_number }} --tag ${{ env.REGISTRY }}/kasm-chromium-proxy:latest
+          docker build --no-cache . --tag kasm_chromium_proxy:latest
         
       - name: Log in to the Container registry
         run: docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ${{ env.REGISTRY }}
