@@ -21,5 +21,5 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          push: false            # Do not push the image
+          push: ${{ github.event_name != 'pull_request' }}
           tags: kasm_chromium_proxy:latest
